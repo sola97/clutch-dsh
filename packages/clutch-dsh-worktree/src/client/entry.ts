@@ -385,7 +385,7 @@ export function apply(ctx: Context): void {
       : fullAccessConfirmation.request,
     onPermissionResult: reportPermissionNotice,
     openSession: (sessionId) => {
-      ctx.sessions.open(sessionId as SessionId);
+      ctx.uiWorkspace.openSession(sessionId as SessionId);
     },
   });
   ctx.effect(
@@ -581,7 +581,7 @@ export function apply(ctx: Context): void {
               increaseTitle: true,
             })
               .then((childId) => {
-                ctx.sessions.open(childId);
+                ctx.uiWorkspace.openSession(childId);
               })
               .catch(() => {
                 // Fork failure leaves the current Session and Worktree projection unchanged.
@@ -600,7 +600,7 @@ export function apply(ctx: Context): void {
                 await forkCoordinator.retry(key);
               },
           openSession: (sessionId: string) => {
-            ctx.sessions.open(sessionId as SessionId);
+            ctx.uiWorkspace.openSession(sessionId as SessionId);
           },
           onWorktreeForgotten: (input: ForgottenWorktree) => {
             forkCoordinator?.forgetWorktree(input);

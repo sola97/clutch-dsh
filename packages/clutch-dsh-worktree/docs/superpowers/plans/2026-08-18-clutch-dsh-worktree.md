@@ -635,7 +635,7 @@ Worktree Consumer 的创建弹窗采用单一路径：
 1. base branch 默认选择当前 Workspace checkout 的 branch；没有 current 标记时回退到第一个 local branch。
 2. Worktree name 始终作为必填项展示，默认是 `dsh/` 加 8 位 UUID 字符；打开弹窗时会对已知 local branch 和 Worktree branch 做碰撞检查并自动重滚。
 3. 创建统一传入 `newBranch`，由 Host 使用 `git worktree add -b <newBranch> <generatedPath> <baseBranch>`。
-4. Host 返回 WorktreeRecord 后，Client 立即调用现有的 `session.create({ cwd })`、sidecar `bindSession` 和 `sessions.open` 链路；中间不等待列表刷新，以免刷新失败阻断新 Session。
+4. Host 返回 WorktreeRecord 后，Client 立即调用现有的 `session.create({ cwd })`、sidecar `bindSession` 和 `ctx.uiWorkspace.openSession()` 链路；中间不等待列表刷新，以免刷新失败阻断新 Session。
 5. Worktree 创建成功但 Session/binding 失败时，弹窗关闭、Worktree 保留，原有 Session binding repair 入口继续提供重试或打开已创建 Session。
 
 这次 UI 调整不改变 DSH Session/Workspace 的数据边界，也不把 Worktree metadata 写进 DSH 原始数据。实际验证覆盖 CTool：生成 `dsh/17d78b46`，创建并打开 `session-c5e035af-1e3e-4d16-8bf2-119f376a7dfe`，sidecar active binding 与 Session `cwd` 均指向同一 Worktree。

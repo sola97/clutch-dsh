@@ -222,9 +222,6 @@ export async function loadClientEntry({
       createdSessions.push(input);
       return 'session-created';
     },
-    open(sessionId) {
-      openedSessions.push(sessionId);
-    },
   };
   if (fork !== undefined) {
     fakeSessions.fork = async (input) => {
@@ -255,6 +252,9 @@ export async function loadClientEntry({
       async archiveSession() {},
     },
     uiWorkspace: {
+      openSession(sessionId) {
+        openedSessions.push(sessionId);
+      },
       pickDirectory() {
         return Promise.resolve('/tmp/workspace-picked');
       },

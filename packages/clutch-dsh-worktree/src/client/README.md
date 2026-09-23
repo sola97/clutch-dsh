@@ -23,7 +23,7 @@ architecture, source-of-truth rules, sidecar ownership and module responsibiliti
 
 The Client does not read `ctx.remote.worktreeManager`, import or traverse the generated `./remote` artifact, call `ctx.remote.$mount()`, or create a second RPC/transport. The Host-side `WorktreeRemoteService` and Typert Gateway remain the server composition; the browser reuses the existing DSH `/api` channel.
 
-## DSH `dsh-v0.1.2-rc.1` Client boundary
+## DSH `dsh-v0.1.6-alpha.2` Client boundary
 
 The browser Consumer targets the public rc.1 Client graph. Browser-local stores import
 `createSnapshotStore` and `defineStore` from `@deepseek-ai/dsh-client-store`; the removed
@@ -32,14 +32,14 @@ The legacy monolithic Client runtime entry is not probed or used as a fallback.
 The injected DSH services have deliberately separate read and command faces:
 
 - `ctx.sessions.list` is the read-only `ObservableSnapshot<SessionListState>`, while Session
-  creation, opening, and fork use `ctx.sessions.create()`, `ctx.sessions.open()`, and
-  `ctx.sessions.fork()`.
+  creation and fork use `ctx.sessions.create()` and `ctx.sessions.fork()`. Visible Session
+  navigation uses `ctx.uiWorkspace.openSession()`; the Session Controller does not own UI navigation.
 - `ctx.workspaces.list` is the read-only `WorkspaceSource` with only `getSnapshot()` and
   `subscribe()`. Workspace creation, rename, deletion, ordering, and archive commands use the
   corresponding `ctx.workspaces` methods; the Consumer never performs writable-list mutation.
-- `ctx.uiWorkspace` owns cross-Controller navigation and directory UI: Main Session creation uses
-  `startSession()`, and the Workspace picker uses `pickDirectory()` before calling the native
-  Workspace Controller's `create()` command.
+- `ctx.uiWorkspace` owns cross-Controller navigation and directory UI: visible Session navigation
+  uses `openSession()`, Main Session creation uses `startSession()`, and the Workspace picker uses
+  `pickDirectory()` before calling the native Workspace Controller's `create()` command.
 
 The Client receives one identity-stable `ctx.workspaces.list` object from DSH. The browser-only
 Worktree membership projection wraps that same source's read methods, reprojects every native

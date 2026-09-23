@@ -62,15 +62,16 @@ package 的 DSH `peerDependencies` 使用不低于 compatibility floor 的范围
 约束；`devDependencies` 只用于当前 checkout 的本地 typecheck、build 和 test，不是发布后的
 runtime 版本承诺。
 
-本 package 的最低 DSH 兼容 graph 为 `dsh-v0.1.5-rc.1`：
+本 package 的最低 DSH 兼容 graph 为 `dsh-v0.1.6-alpha.2`：
 
 | 项目                    | 约束                                                                                                        |
 | ----------------------- | ----------------------------------------------------------------------------------------------------------- |
-| DSH compatibility floor | `dsh-v0.1.5-rc.1`                                                                                           |
-| package DSH peer range  | 所有 `@deepseek-ai/dsh-*` peer 使用 `>=0.1.5-rc.1`                                                          |
-| local validation graph  | 所有对应 `@deepseek-ai/dsh-*` dev dependency 固定 `0.1.2-rc.1`                                              |
-| unsupported graph       | `dsh-v0.1.1-rc.2` 及更早版本；其中已删除的 Client runtime 和可写 Workspace list 不再兼容                    |
-| forward compatibility   | 更高版本只有在保持 Controller、Store、WorkspaceSource、Connection 和 Slot contract 时才可候选，必须重新验证 |
+| DSH compatibility floor | `dsh-v0.1.6-alpha.2`                                                                                                                 |
+| Cordis peer range       | `@deepseek-ai/cordis ^4.0.2`                                                                                                         |
+| package DSH peer range  | `dsh-client-ui-workspace` 和 `dsh-typert-protocol >=0.1.6-alpha.2`；其余 `@deepseek-ai/dsh-*` peer 使用 `>=0.1.5-rc.1`                |
+| local validation graph  | `@deepseek-ai/cordis 4.0.2`、`cordis-plugin-loader 1.0.3`、DSH API Gateway、Client UI Workspace 与 Typert generator/loader/protocol/registry `0.1.6-alpha.2`；其余对应 `@deepseek-ai/dsh-*` dev dependency 固定 `0.1.2-rc.1` |
+| unsupported graph       | 低于 `dsh-v0.1.6-alpha.2` 不在已验证支持范围；本插件依赖该版本的 UI session 导航和 Typert v4 codec 注册契约                                     |
+| forward compatibility   | 更高版本只有在保持 `uiWorkspace.openSession()`、Controller、Store、WorkspaceSource、Connection 和 Slot contract 时才可候选，必须重新验证 |
 
 ## 安装来源
 
@@ -139,7 +140,7 @@ dsh plugin --profile web add @cerbur/clutch-dsh-worktree
 - `package.json` 保留 `dsh.bundle.patch`、`publishConfig.access: "public"` 和
   `prepare: "pnpm run build"`；`packageManager` 保持项目实际使用的 pnpm 版本，不要借此升级依赖；
 - 官方 DSH package 继续放在 `peerDependencies`，不要复制成 runtime `dependencies`；
-- 发布前确认 DSH compatibility floor 仍为 `dsh-v0.1.5-rc.1`，并运行 package manifest、Client
+- 发布前确认 DSH compatibility floor 仍为 `dsh-v0.1.6-alpha.2`，并运行 package manifest、Client
   composition 和 read-only `WorkspaceSource` 回归测试；不要恢复 legacy monolithic Client runtime 或
   `WorkspaceSource.set()` 兼容分支；
 - `lib/` 不提交到 Git，由 `prepare` 从当前源码生成；Git 依赖安装和打包/发布都使用同一条构建

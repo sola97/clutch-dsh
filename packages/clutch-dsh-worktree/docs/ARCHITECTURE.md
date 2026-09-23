@@ -311,9 +311,9 @@ facts 基线时才更新 `baseBranch`，且不会重写 `baseCommit`。Sidecar �
 
 ### 客户端边界与接口契约
 
-- 遵循 DSH `dsh-v0.1.5-rc.1` 接口规范。
+- 遵循 DSH `dsh-v0.1.6-alpha.2` Client 导航接口规范。
 - `ctx.workspaces.list` 是只读的 `WorkspaceSource`，仅提供 `getSnapshot()` 与 `subscribe()`。客户端在其上建立可撤销的只读投影，不复制或替换 Store，保持与原生引用一致。
-- 导航与目录选取委托至 `ctx.uiWorkspace.startSession()` 与 `ctx.uiWorkspace.pickDirectory()`。
+- Session 导航与目录选取委托至 `ctx.uiWorkspace.openSession()`、`ctx.uiWorkspace.startSession()` 与 `ctx.uiWorkspace.pickDirectory()`；`ctx.sessions` 只用于 Session 数据与命令，不负责 UI 导航。
 - **Session 归属与 Projection**：
   Worktree Session 的归属关系由浏览器端基于 `{ workspaceId, sessionId }` 维护本地 membership projection，而非持久化写入 DSH 原生 `Workspace.sessionIds`。在 DSH 原生列表刷新后自动重放，解绑或 Client 销毁时撤销。
 

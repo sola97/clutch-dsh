@@ -92,9 +92,17 @@ test('publishes the generated Host and Client Remote contribution entries', () =
   });
 });
 
-test('declares the dsh-v0.1.5-rc.1 compatibility floor', () => {
+test('declares the dsh-v0.1.6-alpha.2 compatibility floor', () => {
   const minimumDshVersion = '>=0.1.5-rc.1';
-  const validatedDshVersion = '0.1.2-rc.1';
+  const validatedDshVersions = new Map([
+    ['@deepseek-ai/dsh-api-gateway', '0.1.6-alpha.2'],
+    ['@deepseek-ai/dsh-client-ui-workspace', '0.1.6-alpha.2'],
+    ['@deepseek-ai/dsh-typert-generator', '0.1.6-alpha.2'],
+    ['@deepseek-ai/dsh-typert-loader', '0.1.6-alpha.2'],
+    ['@deepseek-ai/dsh-typert-protocol', '0.1.6-alpha.2'],
+    ['@deepseek-ai/dsh-typert-registry', '0.1.6-alpha.2'],
+  ]);
+  const defaultValidatedDshVersion = '0.1.2-rc.1';
   const dshPeerDependencies = Object.entries(packageManifest.peerDependencies ?? {})
     .filter(([name]) => name.startsWith('@deepseek-ai/dsh-'));
   const dshDevDependencies = Object.entries(packageManifest.devDependencies ?? {})
@@ -103,10 +111,19 @@ test('declares the dsh-v0.1.5-rc.1 compatibility floor', () => {
   assert.ok(dshPeerDependencies.length > 0);
   assert.ok(dshDevDependencies.length > 0);
   for (const [name, version] of dshPeerDependencies) {
-    assert.equal(version, minimumDshVersion, `${name} must expose the rc.1 compatibility floor`);
+    const requiredVersion =
+      name === '@deepseek-ai/dsh-client-ui-workspace' ||
+      name === '@deepseek-ai/dsh-typert-protocol'
+        ? '>=0.1.6-alpha.2'
+        : minimumDshVersion;
+    assert.equal(version, requiredVersion, name + ' must expose its API compatibility floor');
   }
   for (const [name, version] of dshDevDependencies) {
-    assert.equal(version, validatedDshVersion, `${name} must match the rc.1 validation graph`);
+    assert.equal(
+      version,
+      validatedDshVersions.has(name) ? validatedDshVersions.get(name) : defaultValidatedDshVersion,
+      name + ' must match the DSH validation graph',
+    );
   }
   assert.equal(packageManifest.peerDependencies['@deepseek-ai/dsh-client-runtime'], undefined);
   assert.equal(packageManifest.devDependencies['@deepseek-ai/dsh-client-runtime'], undefined);
